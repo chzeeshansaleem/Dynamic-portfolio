@@ -1,50 +1,15 @@
+import userProjectData from "../db/projects.json" assert { type: "json" };
+import logout from "../JS/index.js";
+
+console.log(userProjectData);
 const redirct = localStorage.getItem("user");
 if (!redirct) {
   const url = "http://127.0.0.1:5500/HTML/login.html";
   window.location.href = url;
 }
-const userProject = [
-  {
-    username: "zeeshan@gmail.com",
-    projectId: 1,
-    title: "Project Title 0",
-    description:
-      "Describe the project being very specific, you can use the Twitter standard: no more than 280 characters: complement the information: the skills learned or reinforced in its realization and how you faced it, prove to be proactive in the search for solutions.",
-    img: "../asserts/images/pro2.jpg",
-    tags: "#MERN #REACT",
-    languages: "javascript",
-    technology: "JS HTML CSS",
-  },
-  {
-    username: "zeeshan@gmail.com",
-    projectId: 2,
-    title: "Project Title 1",
-    description:
-      "Describe the project being very specific, you can use the Twitter standard: no more than 280 characters: complement the information: the skills learned or reinforced in its realization and how you faced it, prove to be proactive in the search for solutions.",
-    img: "../asserts/images/pro2.jpg",
-    tags: "#MERN #REACT",
-    languages: "javascript",
-    technology: "JS HTML CSS",
-  },
-  {
-    username: "shani@gmail.com",
-    projectId: 3,
-    title: "Project Title 2",
-    description:
-      "Describe the project being very specific, you can use the Twitter standard: no more than 280 characters: complement the information: the skills learned or reinforced in its realization and how you faced it, prove to be proactive in the search for solutions.",
-    img: "../asserts/images/pro1.jpg",
-    tags: "#MERN #REACT",
-    languages: "javascript C++",
-    technology: "JS HTML CSS",
-  },
-];
+
 const user1 = JSON.parse(localStorage.getItem("user"));
-// ///////  when reset the project in local storage tab yeh run krna ha ////
-// var allProjects = localStorage.setItem(
-//   "allproject",
-//   JSON.stringify(userProject)
-// );
-const userProjectData = JSON.parse(localStorage.getItem("allproject"));
+
 // delete project
 function deleteUserProject(projectId) {
   const index = userProjectData.findIndex(
@@ -52,6 +17,7 @@ function deleteUserProject(projectId) {
   );
   if (index !== -1) {
     userProjectData.splice(index, 1);
+    console.log(userProjectData);
     localStorage.setItem("allproject", JSON.stringify(userProjectData));
   }
 }
@@ -62,7 +28,7 @@ function userpro() {
   const userModalDetails = document.querySelector(".usermodalDetails");
 
   userProjectData.forEach((project) => {
-    if (user1.email === project.username) {
+    if (user1 === project.username) {
       const userProjectRow = document.createElement("div");
       userProjectRow.classList.add("userProjectRow");
       const userProjectDetails = document.createElement("div");
@@ -97,16 +63,16 @@ function userpro() {
 
       const userProjectBtn = document.createElement("div");
       userProjectBtn.classList.add("userProjectBtn");
-      const userLiveBtn = document.createElement("button");
-      userLiveBtn.classList.add("userliveBtn");
-      userLiveBtn.textContent = "Edit Project";
+      const UserEditProject = document.createElement("button");
+      UserEditProject.classList.add("userliveBtn");
+      UserEditProject.textContent = "Edit Project";
       const userProjectImg = document.createElement("div");
       userProjectImg.classList.add("userProjectImg");
       userProjectImg.style.backgroundImage = `url(${project.img})`;
 
       // Only open modal when "Edit Project" is clicked
       const editProjectModal = document.querySelector(".editProjectModal");
-      userLiveBtn.onclick = function () {
+      UserEditProject.onclick = function () {
         editProjectModal.style.display = "block";
         editProjectModal.innerHTML = "";
         const editform = document.createElement("form");
@@ -154,7 +120,7 @@ function userpro() {
         editdata41.textContent = "Tags:";
         editdata421.value = project.tags;
         editdata61.textContent = "Languages:";
-        editdata621.value = project.technology;
+        editdata621.value = project.languages;
         editdata51.textContent = "Technology:";
         editdata521.value = project.technology;
         editdata72.appendChild(cancelbtn);
@@ -189,7 +155,8 @@ function userpro() {
         editTable.appendChild(editrow7);
         editform.appendChild(editTable);
 
-        cancelbtn.onclick = function () {
+        cancelbtn.onclick = function (e) {
+          e.preventDefault();
           editProjectModal.style.display = "none";
         };
         //editform.appendChild(savebtn);
@@ -207,11 +174,15 @@ function userpro() {
             userProjectData[projectIndex].title = editdata121.value;
             userProjectData[projectIndex].description = editdata221.value;
             userProjectData[projectIndex].img = editdata321.value;
-            userProjectData[projectIndex].tags = editdata421.value;
-            userProjectData[projectIndex].languages = editdata621.value;
-            userProjectData[projectIndex].technology = editdata521.value;
-            localStorage.setItem("allproject", JSON.stringify(userProjectData));
+            userProjectData[projectIndex].tags = editdata421.value.split(",");
+            userProjectData[projectIndex].languages =
+              editdata621.value.split(",");
+            userProjectData[projectIndex].technology =
+              editdata521.value.split(",");
+            console.log(userProjectData);
+            //localStorage.setItem("allproject", JSON.stringify(userProjectData));
             editProjectModal.style.display = "none";
+            userpro();
           }
         };
       };
@@ -224,7 +195,7 @@ function userpro() {
         deleteUserProject(project.projectId);
         userProjectRow.remove();
       };
-      userProjectBtn.appendChild(userLiveBtn);
+      userProjectBtn.appendChild(UserEditProject);
       userProjectBtn.appendChild(deleteProject);
 
       userProjectDetails.appendChild(userProjectTitle);
@@ -243,7 +214,8 @@ function userpro() {
 userpro();
 // add project function
 const addProjectFunction = document.querySelector(".addProjectBtn");
-addProjectFunction.onclick = () => {
+addProjectFunction.onclick = (e) => {
+  e.preventDefault();
   console.log("clicked addProject");
   const addProjectmodal = document.querySelector(".addprojectModal");
   addProjectmodal.style.display = "block";
@@ -261,9 +233,26 @@ addProjectFunction.onclick = () => {
   const adddata11 = document.createElement("td");
   const adddata12 = document.createElement("td");
   const adddata121 = document.createElement("input");
+  adddata121.addEventListener("input", (e) => {
+    const inputValue = e.target.value;
+    const regex = /[^a-zA-Z0-9\s]/g;
+
+    if (regex.test(inputValue)) {
+      e.target.value = inputValue.replace(/[^a-zA-Z0-9\s]/g, "");
+    }
+  });
+
   const adddata21 = document.createElement("td");
   const adddata22 = document.createElement("td");
   const adddata221 = document.createElement("textarea");
+  adddata221.addEventListener("input", (e) => {
+    const inputValue = e.target.value;
+    const maxLength = 280;
+
+    if (inputValue.length > maxLength) {
+      e.target.value = inputValue.slice(0, maxLength);
+    }
+  });
   const adddata31 = document.createElement("td");
   const adddata32 = document.createElement("td");
   const adddata321 = document.createElement("input");
@@ -275,7 +264,7 @@ addProjectFunction.onclick = () => {
   const adddata521 = document.createElement("textarea");
   const adddata61 = document.createElement("td");
   const adddata62 = document.createElement("td");
-  const adddata621 = document.createElement("textarea");
+  const adddata621 = document.createElement("input");
   const adddata71 = document.createElement("td");
   const adddata72 = document.createElement("td");
   const adddata711 = document.createElement("button");
@@ -285,7 +274,7 @@ addProjectFunction.onclick = () => {
   savebtn.type = "submit";
   adddata72.appendChild(savebtn);
   adddata71.appendChild(adddata711);
-  adddata11.textContent = "Project Table:";
+  adddata11.textContent = "Project Title:";
   //   adddata121.value = user1.name;
   adddata21.textContent = "Project Description:";
   //   adddata221.value = user1.password;
@@ -332,21 +321,22 @@ addProjectFunction.onclick = () => {
   let proid = userProjectData.length;
   console.log(proid);
   // cancel btn
-  adddata711.onclick = function () {
+  adddata711.onclick = function (e) {
+    e.preventDefault();
     addProjectmodal.style.display = "none";
   };
   savebtn.onclick = function (e) {
     e.preventDefault();
     console.log("after default add project click submit");
     const addprojectDataForm = {
-      username: user1.email,
+      username: user1,
       projectId: proid + 1,
       title: adddata121.value,
       description: adddata221.value,
       img: adddata321.value,
-      tags: adddata421.value,
-      languages: adddata521.value,
-      technology: adddata621.value,
+      tags: adddata421.value.split(","),
+      languages: adddata521.value.split(","),
+      technology: adddata621.value.split(","),
     };
     if (
       adddata121.value.trim() == "" ||
@@ -357,7 +347,7 @@ addProjectFunction.onclick = () => {
       return;
     }
     userProjectData.push(addprojectDataForm);
-    localStorage.setItem("allproject", JSON.stringify(userProjectData));
+    //localStorage.setItem("allproject", JSON.stringify(userProjectData));
     userpro();
     console.log(userProjectData);
     console.log(userProjectData.length);
@@ -374,14 +364,39 @@ addProjectFunction.onclick = () => {
   }
 };
 
-const logoutbtn = document.getElementById("logout");
+const searchInput = document.getElementById("searchInput");
 
+if (searchInput) {
+  searchInput.addEventListener("input", searchProjects);
+}
+
+function searchProjects() {
+  const filter = searchInput.value.trim().toUpperCase();
+  const userProjectRow = document.querySelectorAll(".userProjectRow");
+
+  for (let i = 0; i < userProjectData.length; i++) {
+    const title = userProjectData[i].title.toUpperCase();
+    const description = userProjectData[i].description.toUpperCase();
+    // const tags = userProjectData[i].tags.toUpperCase();
+    // const languages = userProjectData[i].languages.toUpperCase();
+    // const Technologies = userProjectData[i].technology.toUpperCase();
+
+    if (
+      title.includes(filter) ||
+      description.includes(filter)
+      //||
+      // tags.includes(filter) ||
+      // languages.includes(filter) ||
+      // Technologies.includes(filter)
+    ) {
+      userProjectRow[i].style.display = "";
+    } else {
+      userProjectRow[i].style.display = "none";
+    }
+  }
+}
+const logoutbtn = document.getElementById("logout");
 // Logout button for admin and user
 if (logoutbtn) {
-  logoutbtn.onclick = function () {
-    localStorage.removeItem("user");
-    localStorage.removeItem("admin");
-    const url = "http://127.0.0.1:5500/HTML/login.html";
-    window.location.href = url;
-  };
+  logoutbtn.onclick = logout;
 }

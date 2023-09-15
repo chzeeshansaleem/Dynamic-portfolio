@@ -1,48 +1,61 @@
+import users from "../db/user.json" assert { type: "json" };
+import logout from "../JS/index.js";
+
+console.log(users);
 const redirct = localStorage.getItem("user");
 if (!redirct) {
   const url = "http://127.0.0.1:5500/HTML/login.html";
   window.location.href = url;
 }
-var user1 = JSON.parse(localStorage.getItem("user"));
 
-if (user1) {
-  console.log("login user" + user1);
-  const emailProfile = document.querySelector(".emailProfile");
-  const nameProfile = document.querySelector(".nameProfile");
-  const passwordProfile = document.querySelector(".passwordProfile");
-  const roleProfile = document.querySelector(".roleProfile");
-  const numberProfile = document.querySelector(".numberProfile");
-  const educationProfile = document.querySelector(".educationProfile");
-  const skillsProfile = document.querySelector(".skillsProfile");
-  const experienceProfile = document.querySelector(".experienceProfile");
-  emailProfile.textContent = user1.email;
-  nameProfile.textContent = user1.name;
-  passwordProfile.textContent = user1.password;
-  roleProfile.textContent = user1.role;
-  numberProfile.textContent = user1.phoneNumber;
-  const educationList = document.createElement("ul");
-  if (user1.education) {
-    user1.education.forEach((educationItem) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = educationItem;
-      educationList.appendChild(listItem);
-    });
+var loginUser = JSON.parse(localStorage.getItem("user"));
+console.log("Login User: " + loginUser);
+
+const user12 = users.filter((user) => user.email === loginUser);
+console.log(user12);
+let user1 = user12[0];
+function userProfile() {
+  if (user1) {
+    console.log("login user" + user1);
+    const emailProfile = document.querySelector(".emailProfile");
+    const nameProfile = document.querySelector(".nameProfile");
+    const passwordProfile = document.querySelector(".passwordProfile");
+    const roleProfile = document.querySelector(".roleProfile");
+    const numberProfile = document.querySelector(".numberProfile");
+    const educationProfile = document.querySelector(".educationProfile");
+    const skillsProfile = document.querySelector(".skillsProfile");
+    const experienceProfile = document.querySelector(".experienceProfile");
+    educationProfile.innerHTML = "";
+    skillsProfile.innerHTML = "";
+    emailProfile.textContent = user1.email;
+    nameProfile.textContent = user1.name;
+    passwordProfile.textContent = user1.password;
+    roleProfile.textContent = user1.role;
+    numberProfile.textContent = user1.phoneNumber;
+    const educationList = document.createElement("ul");
+    if (user1.education) {
+      user1.education.forEach((educationItem) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = educationItem;
+        educationList.appendChild(listItem);
+      });
+    }
+    educationProfile.appendChild(educationList);
+
+    const skillsList = document.createElement("ul");
+    if (user1.skills) {
+      user1.skills.forEach((skill) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = skill;
+        skillsList.appendChild(listItem);
+      });
+    }
+    skillsProfile.appendChild(skillsList);
+
+    experienceProfile.textContent = user1.experience;
   }
-  educationProfile.appendChild(educationList);
-
-  const skillsList = document.createElement("ul");
-  if (user1.skills) {
-    user1.skills.forEach((skill) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = skill;
-      skillsList.appendChild(listItem);
-    });
-  }
-  skillsProfile.appendChild(skillsList);
-
-  experienceProfile.textContent = user1.experience;
 }
-
+userProfile();
 const editProfile = document.querySelector(".editProfile");
 if (editProfile) {
   editProfile.onclick = function () {
@@ -69,21 +82,62 @@ if (editProfile) {
     const editdata11 = document.createElement("td");
     const editdata12 = document.createElement("td");
     const editdata121 = document.createElement("input");
+    editdata121.addEventListener("input", function (event) {
+      const inputValue = event.target.value;
+      const regex = /^[a-zA-Z\s]*$/;
+
+      if (!regex.test(inputValue)) {
+        event.target.value = inputValue.replace(/[^a-zA-Z\s]/g, "");
+      }
+    });
+
     const editdata21 = document.createElement("td");
     const editdata22 = document.createElement("td");
     const editdata221 = document.createElement("input");
     const editdata31 = document.createElement("td");
     const editdata32 = document.createElement("td");
     const editdata321 = document.createElement("input");
+    editdata321.addEventListener("input", function (event) {
+      const inputValue = event.target.value;
+      const regex = /[^0-9]/g;
+
+      if (regex.test(inputValue)) {
+        event.target.value = inputValue.replace(/[^0-9]/g, "");
+      }
+    });
+
     const editdata41 = document.createElement("td");
     const editdata42 = document.createElement("td");
     const editdata421 = document.createElement("input");
+    editdata421.addEventListener("input", function (event) {
+      const inputValue = event.target.value;
+      const regex = /[^a-zA-Z\s]/;
+      if (regex.test(inputValue)) {
+        event.target.value = inputValue.replace(/[^a-zA-Z\s,]/, "");
+      }
+    });
     const editdata51 = document.createElement("td");
     const editdata52 = document.createElement("td");
     const editdata521 = document.createElement("input");
+    editdata521.addEventListener("input", function (event) {
+      const inputValue = event.target.value;
+      const regex = /[^a-zA-Z0-9\s,]/;
+
+      if (regex.test(inputValue)) {
+        event.target.value = inputValue.replace(/[^a-zA-Z0-9\s,]/, "");
+      }
+    });
     const editdata61 = document.createElement("td");
     const editdata62 = document.createElement("td");
     const editdata621 = document.createElement("input");
+    editdata621.addEventListener("input", function (event) {
+      const inputValue = event.target.value;
+      const regex = /[^a-zA-Z0-9\s,]/;
+
+      if (regex.test(inputValue)) {
+        event.target.value = inputValue.replace(/[^a-zA-Z0-9\s,]/, "");
+      }
+    });
     editdata11.textContent = "Name:";
     editdata121.value = user1.name;
     editdata21.textContent = "password:";
@@ -133,19 +187,20 @@ if (editProfile) {
     savebtn.onclick = function (e) {
       e.preventDefault();
       console.log("after default click submit");
-      const updatedData = {
-        email: user1.email,
-        role: user1.role,
-        name: editdata121.value,
-        password: editdata221.value,
-        phoneNumber: editdata321.value,
-        education: editdata421.value.split(","),
-        skills: editdata521.value.split(","),
-        experience: editdata621.value,
-      };
-      localStorage.setItem("user", JSON.stringify(updatedData));
+      const userindex = users.findIndex((u) => u.email === loginUser);
+      if (userindex !== -1) {
+        users[userindex].name = editdata121.value;
+        users[userindex].password = editdata221.value;
 
+        users[userindex].phoneNumber = editdata321.value;
+
+        users[userindex].education = editdata421.value.split(",");
+
+        users[userindex].skills = editdata521.value.split(",");
+        users[userindex].experience = editdata621.value;
+      }
       modal.style.display = "none";
+      userProfile();
     };
   };
 }
@@ -153,10 +208,5 @@ const logoutbtn = document.getElementById("logout");
 
 // Logout button for admin and user
 if (logoutbtn) {
-  logoutbtn.onclick = function () {
-    localStorage.removeItem("user");
-    localStorage.removeItem("admin");
-    const url = "http://127.0.0.1:5500/HTML/login.html";
-    window.location.href = url;
-  };
+  logoutbtn.onclick = logout;
 }

@@ -1,38 +1,16 @@
-// const users = [
-//   {
-//     name: "Admin",
-//     email: "admin@gmail.com",
-//     password: "12345",
-//     role: "admin",
-//     phoneNumber: "",
-//     education: [],
-//     skills: [],
-//     experience: "",
-//   },
-//   {
-//     name: "zeeshan",
-//     email: "zeeshan@gmail.com",
-//     password: "12345",
-//     role: "user",
-//     phoneNumber: "",
-//     education: [],
-//     skills: [],
-//     experience: "",
-//   },
-//   {
-//     name: "shani",
-//     email: "shani@gmail.com",
-//     password: "12345",
-//     role: "user",
-//     phoneNumber: "",
-//     education: [],
-//     skills: [],
-//     experience: "",
-//   },
-// ];
-
-// localStorage.setItem("users", JSON.stringify(users));
-var users = JSON.parse(localStorage.getItem("users")) || [];
+import users from "../db/user.json" assert { type: "json" };
+const redirct = localStorage.getItem("user");
+const redirctadmin = localStorage.getItem("admin");
+if (redirct) {
+  const url = "http://127.0.0.1:5500/HTML/index.html";
+  const url2 = "http://127.0.0.1:5500/HTML/userProfile.html";
+  const url3 = "http://127.0.0.1:5500/HTML/userProjects.html";
+  window.location.href = url || url2 || url3;
+} else if (redirctadmin) {
+  const url = "http://127.0.0.1:5500/HTML/adminUsers.html";
+  const url2 = "http://127.0.0.1:5500/HTML/adminProject.html";
+  window.location.href = url || url2;
+}
 
 function handleSignup(event) {
   event.preventDefault();
@@ -55,7 +33,8 @@ function handleSignup(event) {
     return;
   }
   users.push(user);
-  localStorage.setItem("users", JSON.stringify(users));
+  // localStorage.setItem("users", JSON.stringify(users));
+  console.log(users);
   alert("Signup successful");
   //input fields empty k liyeh
   document.getElementById("name").value = "";

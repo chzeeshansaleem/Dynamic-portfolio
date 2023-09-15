@@ -1,11 +1,14 @@
+import jsonfile from "../db/user.json" assert { type: "json" };
+console.log(jsonfile);
+import userProjectData from "../db/projects.json" assert { type: "json" };
+console.log(userProjectData);
+import logoutAdmin from "../JS/AdminViewProjects.js";
 const redirct = localStorage.getItem("admin");
 if (!redirct) {
   const url = "http://127.0.0.1:5500/HTML/login.html";
   window.location.href = url;
 }
-const users = JSON.parse(localStorage.getItem("users"));
-console.log(users);
-const userProjectData = JSON.parse(localStorage.getItem("allproject"));
+
 // delete project
 function deleteUserProject(usermail) {
   console.log("delete Project Clicked by admin");
@@ -18,11 +21,11 @@ function deleteUserProject(usermail) {
       i--;
     }
   }
-  localStorage.setItem("allproject", JSON.stringify(userProjectData));
-  const index = users.findIndex((user) => user.email === usermail);
+
+  const index = jsonfile.findIndex((user) => user.email === usermail);
   if (index !== -1) {
-    users.splice(index, 1);
-    localStorage.setItem("users", JSON.stringify(users));
+    jsonfile.splice(index, 1);
+    // localStorage.setItem("users", JSON.stringify(users));
     usershow();
   }
 }
@@ -36,12 +39,31 @@ function deleteUser(useremail) {
 }
 const adminTable = document.createElement("table");
 adminTable.setAttribute("id", "myTable");
-
+const AdminEditUserRole = document.querySelector(".AdminEditUserRole");
 function usershow() {
   if (adminuser) {
     adminTable.innerHTML = "";
+
+    const adminTableHeader = document.createElement("tr");
+    const adminTableHeadName = document.createElement("th");
+    adminTableHeadName.textContent = "Name";
+    const adminTableHeadEmail = document.createElement("th");
+    adminTableHeadEmail.textContent = "Email";
+    const adminTableHeadRole = document.createElement("th");
+    adminTableHeadRole.textContent = "Role";
+    const adminTableHeadActions = document.createElement("th");
+    adminTableHeadActions.colSpan = "2";
+    adminTableHeadActions.textContent = "Actions";
+
+    adminTableHeader.appendChild(adminTableHeadName);
+    adminTableHeader.appendChild(adminTableHeadEmail);
+    adminTableHeader.appendChild(adminTableHeadRole);
+    adminTableHeader.appendChild(adminTableHeadActions);
+    adminTable.appendChild(adminTableHeader);
+
     const currentAdminEmail = JSON.parse(localStorage.getItem("admin"));
-    users.forEach((user) => {
+
+    jsonfile.forEach((user) => {
       if (
         user.role === "user" ||
         (user.role === "admin" && user.email !== currentAdminEmail)
@@ -50,8 +72,14 @@ function usershow() {
         const adminTableRowTdName = document.createElement("td");
         adminTableRowTdName.textContent = user.name;
         const adminTableRowTdEmail = document.createElement("td");
+        const adminTableRowTdRole = document.createElement("td");
+        adminTableRowTdRole.textContent = user.role;
         adminTableRowTdEmail.textContent = user.email;
         const adminTableRowTdAction = document.createElement("td");
+        const adminTableRowTdAction2 = document.createElement("td");
+        const adminEdit = document.createElement("button");
+        adminEdit.textContent = "Edit Role";
+        adminTableRowTdAction2.appendChild(adminEdit);
         const adminAction = document.createElement("button");
         adminAction.textContent = "Delete";
         adminAction.style.background = "red";
@@ -59,20 +87,84 @@ function usershow() {
         adminTableRowTdAction.appendChild(adminAction);
         adminTableRow.appendChild(adminTableRowTdName);
         adminTableRow.appendChild(adminTableRowTdEmail);
+        adminTableRow.appendChild(adminTableRowTdRole);
+
+        adminTableRow.appendChild(adminTableRowTdAction2);
+
         adminTableRow.appendChild(adminTableRowTdAction);
+
         adminTable.appendChild(adminTableRow);
-        adminAction.onclick = function () {
+        // Edit Button
+        adminEdit.onclick = function () {
+          AdminEditUserRole.style.display = "block";
+          AdminEditUserRole.innerHTML = "";
+          const addform = document.createElement("form");
+          //   addform.innerHTML = "";
+          const addTable = document.createElement("table");
+          const addrow3 = document.createElement("tr");
+          const addrow5 = document.createElement("tr");
+          const adddata31 = document.createElement("td");
+          const adddata51 = document.createElement("td");
+          const adddata52 = document.createElement("td");
+          const cancelAddUser = document.createElement("button");
+          cancelAddUser.textContent = "Cancel";
+          const saveEditbtn = document.createElement("button");
+          saveEditbtn.textContent = "Save";
+          // saveEditbtn.type = "submit";
+          adddata31.textContent = "Role";
+          const adddata32 = document.createElement("td");
+          const userRadio = document.createElement("select");
+
+          console.log(userRadio.value);
+          const userSelect = document.createElement("option");
+          userSelect.textContent = "user";
+          userSelect.value = "user";
+          const adminSelect = document.createElement("option");
+          adminSelect.textContent = "admin";
+          adminSelect.value = "admin";
+          userRadio.value = user.role;
+          adddata52.appendChild(saveEditbtn);
+          adddata51.appendChild(cancelAddUser);
+
+          userRadio.appendChild(userSelect);
+          userRadio.appendChild(adminSelect);
+          adddata32.appendChild(userRadio);
+          addrow3.appendChild(adddata31);
+          addrow3.appendChild(adddata32);
+          addrow5.appendChild(adddata51);
+          addrow5.appendChild(adddata52);
+          addTable.appendChild(addrow3);
+          addTable.appendChild(addrow5);
+          addform.appendChild(addTable);
+          AdminEditUserRole.appendChild(addform);
+          //admin modal cancel ka btn
+          cancelAddUser.onclick = function () {
+            AdminEditUserRole.style.display = "none";
+          };
+          // edit data ko save ka btn
+          saveEditbtn.onclick = function (e) {
+            e.preventDefault();
+            const selectedRole = userRadio.value;
+            editRole(user.email, selectedRole);
+            AdminEditUserRole.style.display = "none";
+          };
+        };
+        // delete user ya admin button
+        adminAction.onclick = function (e) {
+          e.preventDefault();
           deleteUserProject(user.email);
-          //deleteUser(user.email);
+          console.log(userProjectData);
         };
       }
     });
     adminuser.appendChild(adminTable);
   }
 }
+
 usershow();
 const AdminAddUser = document.querySelector(".AdminAddUser");
 const AdminAddUserBtn = document.querySelector(".AdminAddUserBtn");
+// Add new user btn
 AdminAddUserBtn.onclick = function () {
   AdminAddUser.style.display = "block";
   const adminCross = document.querySelector("adminCross");
@@ -85,6 +177,7 @@ AdminAddUserBtn.onclick = function () {
   const addrow3 = document.createElement("tr");
   const addrow4 = document.createElement("tr");
   const addrow5 = document.createElement("tr");
+
   const adddata11 = document.createElement("td");
   const adddata12 = document.createElement("td");
   const adddata121 = document.createElement("input");
@@ -154,7 +247,6 @@ AdminAddUserBtn.onclick = function () {
   addTable.appendChild(addrow5);
   addform.appendChild(addTable);
 
-  addform.appendChild(savebtn);
   AdminAddUser.appendChild(addform);
 
   savebtn.onclick = function (e) {
@@ -172,17 +264,21 @@ AdminAddUserBtn.onclick = function () {
       experience: "",
     };
 
-    if (adddata121.value.trim() == "" || adddata221.value.trim() == "") {
-      alert("name,email,password is required");
+    if (
+      adddata121.value.trim() == "" ||
+      adddata221.value.trim() == "" ||
+      selectedRole.trim() == "choose"
+    ) {
+      alert("name,email,password and role  is required");
       return;
     }
-    const user = users.find((user) => user.email === adddata121.value);
+    const user = jsonfile.find((user) => user.email === adddata121.value);
     if (user) {
       alert("this email already exist");
       return;
     }
-    users.unshift(adduserDataForm);
-    localStorage.setItem("users", JSON.stringify(users));
+    jsonfile.unshift(adduserDataForm);
+    // localStorage.setItem("users", JSON.stringify(jsonfile));
 
     AdminAddUser.style.display = "none";
     adminTable.innerHTML = "";
@@ -193,29 +289,37 @@ AdminAddUserBtn.onclick = function () {
     AdminAddUser.style.display = "none";
   };
 };
+function editRole(userEmail, newRole) {
+  const userIndex = jsonfile.findIndex((user) => user.email === userEmail);
+  if (userIndex !== -1) {
+    jsonfile[userIndex].role = newRole;
+  }
+  usershow();
+}
 
-// Search Bar
+//Search Bar
 const searchInput = document.getElementById("searchInput");
 if (searchInput) {
   searchInput.addEventListener("input", SearchSuggestion);
 }
 function SearchSuggestion() {
-  const filter = document.getElementById("searchInput").value.toUpperCase();
+  const filter = document.getElementById("searchInput").value.toLowerCase();
   let myTable = document.getElementById("myTable");
   let tr = myTable.getElementsByTagName("tr");
 
-  for (let i = 0; i < tr.length; i++) {
-    let td = tr[i].getElementsByTagName("td");
+  for (let i = 1; i < tr.length; i++) {
+    let email = jsonfile[i].email.toLowerCase();
+    let name = jsonfile[i].name.toLowerCase();
+    let phoneNumber = jsonfile[i].phoneNumber.toLowerCase();
 
-    for (let j = 0; j < td.length; j++) {
-      let textValue = td[j].textContent || td[j].innerHTML;
-
-      if (textValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-        break; // Break the inner loop if a match is found in any <td>
-      } else {
-        tr[i].style.display = "none";
-      }
+    if (
+      email.includes(filter) ||
+      name.includes(filter) ||
+      phoneNumber.includes(filter)
+    ) {
+      tr[i].style.display = "";
+    } else {
+      tr[i].style.display = "none";
     }
   }
 }
@@ -224,10 +328,5 @@ const logoutbtn = document.getElementById("logout");
 
 // Logout button for admin and user
 if (logoutbtn) {
-  logoutbtn.onclick = function () {
-    localStorage.removeItem("user");
-    localStorage.removeItem("admin");
-    const url = "http://127.0.0.1:5500/HTML/login.html";
-    window.location.href = url;
-  };
+  logoutbtn.onclick = logoutAdmin;
 }

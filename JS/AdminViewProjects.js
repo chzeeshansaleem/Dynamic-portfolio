@@ -1,40 +1,13 @@
+import projectData from "../db/projects.json" assert { type: "json" };
+
+console.log(projectData);
 const redirctadmin = localStorage.getItem("admin");
 if (!redirctadmin) {
   const url = "http://127.0.0.1:5500/HTML/login.html";
   window.location.href = url;
 }
-
-const projectData = JSON.parse(localStorage.getItem("allproject"));
-// [
-//   {
-//     username: "zeeshan@gmail.com",
-//     projectId: 1,
-//     title: "Project Title 0",
-//     description:
-//       "Describe the project being very specific, you can use the Twitter standard: no more than 280 characters: complement the information: the skills learned or reinforced in its realization and how you faced it, prove to be proactive in the search for solutions.",
-//     img: "../asserts/images/pro2.jpg",
-//   },
-//   {
-//     username: "zeeshan@gmail.com",
-//     projectId: 2,
-//     title: "Project Title 1",
-//     description:
-//       "Describe the project being very specific, you can use the Twitter standard: no more than 280 characters: complement the information: the skills learned or reinforced in its realization and how you faced it, prove to be proactive in the search for solutions.",
-//     img: "../asserts/images/pro2.jpg",
-//   },
-//   {
-//     username: "shani@gmail.com",
-//     projectId: 3,
-//     title: "Project Title 2",
-//     description:
-//       "Describe the project being very specific, you can use the Twitter standard: no more than 280 characters: complement the information: the skills learned or reinforced in its realization and how you faced it, prove to be proactive in the search for solutions.",
-//     img: "../asserts/images/pro1.jpg",
-//   },
-// ];
-
 const projectsContainer = document.querySelector(".projects");
 const modal = document.querySelector(".modal");
-const modalDetails = document.querySelector(".modalDetails");
 projectData.forEach((project) => {
   const projectRow = document.createElement("div");
   projectRow.classList.add("ProjectRow");
@@ -47,42 +20,9 @@ projectData.forEach((project) => {
   if (project.description.length > 150) {
     projectDescription.textContent = project.description.slice(0, 150) + "...";
   } else {
+    console.log(project.description);
     projectDescription.textContent = project.description;
   }
-  const tags1 = document.createElement("p");
-  tags1.classList.add("tags");
-  tags1.textContent = project.tags;
-  const framework1 = document.createElement("p");
-  framework1.classList.add("framework");
-  if (project.technology.length > 0) {
-    framework1.textContent = "Technologies: " + project.technology;
-  } else {
-    framework1.textContent = "";
-  }
-  const languages1 = document.createElement("p");
-  languages1.classList.add("language");
-  if (project.languages.length > 0) {
-    languages1.textContent = "Languages: " + project.languages;
-  } else {
-    languages1.textContent = "";
-  }
-  projectDescription.onclick = function open() {
-    modal.style.display = "block";
-
-    const modalPic = document.querySelector(".modalPic");
-    modalPic.style.backgroundImage = `url(${project.img})`;
-
-    modalDetails.innerHTML = "";
-
-    const protitle = document.createElement("h3");
-    protitle.textContent = project.title;
-
-    const description = document.createElement("p");
-    description.textContent = project.description;
-
-    modalDetails.appendChild(protitle);
-    modalDetails.appendChild(description);
-  };
 
   const projectBtn = document.createElement("div");
   projectBtn.classList.add("projectBtn");
@@ -96,34 +36,61 @@ projectData.forEach((project) => {
   const projectImg = document.createElement("div");
   projectImg.classList.add("projectImg");
   projectImg.style.backgroundImage = `url(${project.img})`;
-  // sirf see live per click kr k
-  liveBtn.onclick = function () {
+  function modalProject() {
     modal.style.display = "block";
-
     const modalPic = document.querySelector(".modalPic");
     modalPic.style.backgroundImage = `url(${project.img})`;
-
     const modalDetails = document.querySelector(".modalDetails");
     modalDetails.innerHTML = "";
-
     const protitle = document.createElement("h3");
     protitle.textContent = project.title;
-
     const description = document.createElement("p");
     description.textContent = project.description;
-    const tags = document.createElement("p");
-    tags.textContent = project.tags;
-    const framework = document.createElement("p");
-    framework.textContent = "Technologies: " + project.technology;
-    const languages = document.createElement("p");
-    languages.textContent = "Languages: " + project.languages;
+    const tech = document.createElement("p");
+    tech.textContent = "Technologies:";
+    tech.style.fontWeight = "bold";
+    const lang = document.createElement("p");
+    lang.textContent = "Languages:";
+    lang.style.fontWeight = "bold";
+    const tagsHeading = document.createElement("p");
+    tagsHeading.textContent = "Tags";
+    tagsHeading.style.fontWeight = "bold";
+    const tagsUl = document.createElement("ul");
+    tagsUl.style.display = "flex";
+    const Technologies = document.createElement("ul");
+    Technologies.style.display = "flex";
+    Technologies.style.justifyContent = "space-around";
+    const languageUl = document.createElement("ul");
+    languageUl.style.display = "flex";
+    languageUl.style.justifyContent = "space-around";
+    for (let i = 0; i < project.technology.length; i++) {
+      const li = document.createElement("li");
+      li.textContent = project.technology[i];
+      Technologies.appendChild(li);
+    }
+    for (let i = 0; i < project.tags.length; i++) {
+      const li = document.createElement("li");
+      li.textContent = project.tags[i];
+      li.style.listStyle = "none";
+      tagsUl.appendChild(li);
+    }
+    for (let i = 0; i < project.languages.length; i++) {
+      const li = document.createElement("li");
+      li.textContent = project.languages[i];
+      languageUl.appendChild(li);
+    }
     modalDetails.appendChild(protitle);
     modalDetails.appendChild(description);
-    modalDetails.appendChild(tags);
-    modalDetails.appendChild(languages);
-    modalDetails.appendChild(framework);
-  };
-
+    modalDetails.appendChild(tagsUl);
+    modalDetails.appendChild(tech);
+    modalDetails.appendChild(Technologies);
+    modalDetails.appendChild(lang);
+    modalDetails.appendChild(languageUl);
+  }
+  // sirf see live per click kr k
+  liveBtn.onclick = modalProject;
+  projectDescription.onclick = modalProject;
+  // Close modal Btn
   const cross = document.getElementById("cross");
   if (cross) {
     cross.onclick = () => {
@@ -134,19 +101,11 @@ projectData.forEach((project) => {
   sourceBtn.href = "#";
   sourceBtn.classList.add("sourceBtn");
   sourceBtn.textContent = "Source Code";
-
   projectBtn.appendChild(liveBtn);
   projectBtn.appendChild(sourceBtn);
-
   projectDetails.appendChild(projectTitle);
   projectDetails.appendChild(projectDescription);
-  projectDetails.appendChild(tags1);
-  projectDetails.appendChild(framework1);
-
-  projectDetails.appendChild(languages1);
-
   projectDetails.appendChild(projectBtn);
-
   projectRow.appendChild(projectDetails);
   projectRow.appendChild(projectImg);
   if (projectsContainer) {
@@ -160,44 +119,64 @@ if (searchInput) {
   searchInput.addEventListener("input", searchProjects);
 }
 
-function searchProjects() {
-  const filter = searchInput.value.toUpperCase();
+export function searchProjects() {
+  const filter = searchInput.value.trim().toUpperCase();
   const projectRows = document.querySelectorAll(".ProjectRow");
 
-  projectRows.forEach((projectRow) => {
-    const TAGS = projectRow.querySelector(".tags");
-    const TagText = TAGS.textContent.toUpperCase();
-    const frame = projectRow.querySelector(".framework");
-    const frameText = frame.textContent.toUpperCase();
-    const language = projectRow.querySelector(".tags");
-    const languageText = language.textContent.toUpperCase();
-    const projectTitle = projectRow.querySelector(".projectDetails h3");
-    const projectDescription = projectRow.querySelector(".projectDetails p");
-    const titleText = projectTitle.textContent.toUpperCase();
-    const descriptionText = projectDescription.textContent.toUpperCase();
+  for (let i = 0; i < projectData.length; i++) {
+    const title = projectData[i].title.toUpperCase();
+    const description = projectData[i].description.toUpperCase();
+
+    let tagsMatch = false;
+    let languagesMatch = false;
+    let technologiesMatch = false;
+    // tags search kr raha ha
+    for (let k = 0; k < projectData[i].tags.length; k++) {
+      const tag = projectData[i].tags[k].toUpperCase();
+      if (tag.includes(filter)) {
+        tagsMatch = true;
+        break;
+      }
+    }
+    // languange search kr raha ha
+    for (let k = 0; k < projectData[i].languages.length; k++) {
+      const language = projectData[i].languages[k].toUpperCase();
+      if (language.includes(filter)) {
+        languagesMatch = true;
+        break;
+      }
+    }
+    // technology ko search kr raha ha
+    for (let k = 0; k < projectData[i].technology.length; k++) {
+      const technology = projectData[i].technology[k].toUpperCase();
+      if (technology.includes(filter)) {
+        technologiesMatch = true;
+        break;
+      }
+    }
 
     if (
-      titleText.includes(filter) ||
-      descriptionText.includes(filter) ||
-      TagText.includes(filter) ||
-      frameText.includes(filter) ||
-      languageText.includes(filter)
+      title.includes(filter) ||
+      description.includes(filter) ||
+      tagsMatch ||
+      languagesMatch ||
+      technologiesMatch
     ) {
-      projectRow.style.display = "flex";
+      projectRows[i].style.display = "";
     } else {
-      projectRow.style.display = "none";
+      projectRows[i].style.display = "none";
     }
-  });
+  }
 }
-// }
-const logoutbtn = document.getElementById("logout");
 
+const logoutbtn = document.getElementById("logout");
+export default function logoutAdmin() {
+  localStorage.removeItem("user");
+  localStorage.removeItem("admin");
+  const url = "http://127.0.0.1:5500/HTML/login.html";
+  window.location.href = url;
+}
 // Logout button for admin and user
 if (logoutbtn) {
-  logoutbtn.onclick = function () {
-    localStorage.removeItem("user");
-    localStorage.removeItem("admin");
-    const url = "http://127.0.0.1:5500/HTML/login.html";
-    window.location.href = url;
-  };
+  logoutbtn.onclick = logoutAdmin;
 }
