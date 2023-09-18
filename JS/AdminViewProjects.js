@@ -32,7 +32,7 @@ projectData.forEach((project) => {
   probtn2.classList.add("proBtn1");
   const liveBtn = document.createElement("button");
   liveBtn.classList.add("liveBtn");
-  liveBtn.textContent = "See Live";
+  liveBtn.textContent = "Details";
   const projectImg = document.createElement("div");
   projectImg.classList.add("projectImg");
   projectImg.style.backgroundImage = `url(${project.img})`;
@@ -171,7 +171,6 @@ export function searchProjects() {
 
 const logoutbtn = document.getElementById("logout");
 export default function logoutAdmin() {
-  localStorage.removeItem("user");
   localStorage.removeItem("admin");
   const url = "http://127.0.0.1:5500/HTML/login.html";
   window.location.href = url;

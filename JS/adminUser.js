@@ -110,22 +110,27 @@ function usershow() {
           cancelAddUser.textContent = "Cancel";
           const saveEditbtn = document.createElement("button");
           saveEditbtn.textContent = "Save";
-          // saveEditbtn.type = "submit";
           adddata31.textContent = "Role";
           const adddata32 = document.createElement("td");
           const userRadio = document.createElement("select");
-
-          console.log(userRadio.value);
+          const userCurrentRole = document.createElement("option");
+          userCurrentRole.textContent = user.role;
+          userCurrentRole.value = user.role;
+          userCurrentRole.selected = true;
           const userSelect = document.createElement("option");
           userSelect.textContent = "user";
           userSelect.value = "user";
           const adminSelect = document.createElement("option");
           adminSelect.textContent = "admin";
           adminSelect.value = "admin";
-          userRadio.value = user.role;
+          userRadio.onclick = () => {
+            userCurrentRole.style.display = "none";
+          };
+
+          console.log(userRadio.value);
           adddata52.appendChild(saveEditbtn);
           adddata51.appendChild(cancelAddUser);
-
+          userRadio.appendChild(userCurrentRole);
           userRadio.appendChild(userSelect);
           userRadio.appendChild(adminSelect);
           adddata32.appendChild(userRadio);
@@ -138,7 +143,8 @@ function usershow() {
           addform.appendChild(addTable);
           AdminEditUserRole.appendChild(addform);
           //admin modal cancel ka btn
-          cancelAddUser.onclick = function () {
+          cancelAddUser.onclick = function (e) {
+            e.preventDefault();
             AdminEditUserRole.style.display = "none";
           };
           // edit data ko save ka btn
@@ -167,6 +173,8 @@ const AdminAddUserBtn = document.querySelector(".AdminAddUserBtn");
 // Add new user btn
 AdminAddUserBtn.onclick = function () {
   AdminAddUser.style.display = "block";
+  AdminAddUser.style.height = "auto";
+
   const adminCross = document.querySelector("adminCross");
   AdminAddUser.innerHTML = "";
   const addform = document.createElement("form");
@@ -182,6 +190,7 @@ AdminAddUserBtn.onclick = function () {
   const adddata12 = document.createElement("td");
   const adddata121 = document.createElement("input");
   adddata121.setAttribute("type", "email");
+
   const adddata21 = document.createElement("td");
   const adddata22 = document.createElement("td");
   const adddata221 = document.createElement("input");
@@ -210,6 +219,13 @@ AdminAddUserBtn.onclick = function () {
   const adddata41 = document.createElement("td");
   const adddata42 = document.createElement("td");
   const adddata421 = document.createElement("input");
+  adddata421.addEventListener("input", function (event) {
+    const inputValue = event.target.value;
+    const regex = /[^a-zA-Z\s]/;
+    if (regex.test(inputValue)) {
+      event.target.value = inputValue.replace(/[^a-zA-Z\s,]/, "");
+    }
+  });
   const savebtn = document.createElement("button");
   savebtn.textContent = "Save";
   savebtn.type = "submit";

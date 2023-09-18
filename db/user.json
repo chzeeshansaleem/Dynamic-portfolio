@@ -1,7 +1,6 @@
 [
   {
     "email": "admin@gmail.com",
-
     "name": "admin",
     "password": "12345",
     "phoneNumber": "03440177289",
@@ -10,7 +9,7 @@
   {
     " education": [],
     "email": "admin123@gmail.com",
-    "experience": "",
+    "experience": [],
     "name": "admin",
     "password": "12345",
     "phoneNumber": "123456",
@@ -20,7 +19,7 @@
   {
     " education": [],
     "email": "zeeshan@gmail.com",
-    "experience": "",
+    "experience": ["5year", "4year"],
     "name": "zeeshan",
     "password": "12345",
     "phoneNumber": "0341",
@@ -30,7 +29,7 @@
   {
     " education": [],
     "email": "shani@gmail.com",
-    "experience": "",
+    "experience": [],
     "name": "zeeshan",
     "password": "12345",
     "phoneNumber": "",

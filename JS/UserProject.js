@@ -18,7 +18,7 @@ function deleteUserProject(projectId) {
   if (index !== -1) {
     userProjectData.splice(index, 1);
     console.log(userProjectData);
-    localStorage.setItem("allproject", JSON.stringify(userProjectData));
+    //localStorage.setItem("allproject", JSON.stringify(userProjectData));
   }
 }
 function userpro() {
@@ -43,23 +43,23 @@ function userpro() {
       } else {
         userProjectDescription.textContent = project.description;
       }
-      userProjectDescription.onclick = function open() {
-        userModal.style.display = "block";
+      // userProjectDescription.onclick = function open() {
+      //   userModal.style.display = "block";
 
-        const userModalPic = document.querySelector(".usermodalPic");
-        userModalPic.style.backgroundImage = `url(${project.img})`;
+      //   const userModalPic = document.querySelector(".usermodalPic");
+      //   userModalPic.style.backgroundImage = `url(${project.img})`;
 
-        userModalDetails.innerHTML = "";
+      //   userModalDetails.innerHTML = "";
 
-        const userProtitle = document.createElement("h3");
-        userProtitle.textContent = project.title;
+      //   const userProtitle = document.createElement("h3");
+      //   userProtitle.textContent = project.title;
 
-        const userDescription = document.createElement("p");
-        userDescription.textContent = project.description;
+      //   const userDescription = document.createElement("p");
+      //   userDescription.textContent = project.description;
 
-        userModalDetails.appendChild(userProtitle);
-        userModalDetails.appendChild(userDescription);
-      };
+      //   userModalDetails.appendChild(userProtitle);
+      //   userModalDetails.appendChild(userDescription);
+      // };
 
       const userProjectBtn = document.createElement("div");
       userProjectBtn.classList.add("userProjectBtn");
@@ -191,9 +191,11 @@ function userpro() {
       //   userSourceBtn.href = "#";
       deleteProject.classList.add("usersourceBtn");
       deleteProject.textContent = "delete";
-      deleteProject.onclick = function () {
+      deleteProject.onclick = function (e) {
+        e.preventDefault();
         deleteUserProject(project.projectId);
-        userProjectRow.remove();
+        userpro();
+        // userProjectRow.remove();
       };
       userProjectBtn.appendChild(UserEditProject);
       userProjectBtn.appendChild(deleteProject);

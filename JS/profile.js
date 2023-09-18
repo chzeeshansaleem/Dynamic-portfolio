@@ -13,7 +13,7 @@ console.log("Login User: " + loginUser);
 
 const user12 = users.filter((user) => user.email === loginUser);
 console.log(user12);
-let user1 = user12[0];
+let user1 = user12.shift();
 function userProfile() {
   if (user1) {
     console.log("login user" + user1);
@@ -27,6 +27,7 @@ function userProfile() {
     const experienceProfile = document.querySelector(".experienceProfile");
     educationProfile.innerHTML = "";
     skillsProfile.innerHTML = "";
+    experienceProfile.innerHTML = "";
     emailProfile.textContent = user1.email;
     nameProfile.textContent = user1.name;
     passwordProfile.textContent = user1.password;
@@ -36,6 +37,7 @@ function userProfile() {
     if (user1.education) {
       user1.education.forEach((educationItem) => {
         const listItem = document.createElement("li");
+        listItem.style.listStyle = "none";
         listItem.textContent = educationItem;
         educationList.appendChild(listItem);
       });
@@ -46,13 +48,22 @@ function userProfile() {
     if (user1.skills) {
       user1.skills.forEach((skill) => {
         const listItem = document.createElement("li");
+        listItem.style.listStyle = "none";
         listItem.textContent = skill;
         skillsList.appendChild(listItem);
       });
     }
     skillsProfile.appendChild(skillsList);
-
-    experienceProfile.textContent = user1.experience;
+    const expList = document.createElement("ul");
+    if (user1.experience) {
+      user1.experience.forEach((exp) => {
+        const listItem = document.createElement("li");
+        listItem.style.listStyle = "none";
+        listItem.textContent = exp;
+        expList.appendChild(listItem);
+      });
+    }
+    experienceProfile.appendChild(expList);
   }
 }
 userProfile();
@@ -72,6 +83,7 @@ if (editProfile) {
     );
     MainContentOfProject.innerHTML = "";
     const editform = document.createElement("form");
+
     const editTable = document.createElement("table");
     const editrow1 = document.createElement("tr");
     const editrow2 = document.createElement("tr");
@@ -84,9 +96,9 @@ if (editProfile) {
     const editdata121 = document.createElement("input");
     editdata121.addEventListener("input", function (event) {
       const inputValue = event.target.value;
-      const regex = /^[a-zA-Z\s]*$/;
+      const regex = /[^a-zA-Z\s]/g;
 
-      if (!regex.test(inputValue)) {
+      if (regex.test(inputValue)) {
         event.target.value = inputValue.replace(/[^a-zA-Z\s]/g, "");
       }
     });
@@ -197,7 +209,7 @@ if (editProfile) {
         users[userindex].education = editdata421.value.split(",");
 
         users[userindex].skills = editdata521.value.split(",");
-        users[userindex].experience = editdata621.value;
+        users[userindex].experience = editdata621.value.split(",");
       }
       modal.style.display = "none";
       userProfile();

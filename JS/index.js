@@ -1,17 +1,5 @@
-import projectData from "../db/projects.json" assert { type: "json" };
-import username from "../db/user.json" assert { type: "json" };
-console.log(username);
-console.log(projectData);
 const redirct = JSON.parse(localStorage.getItem("user"));
-console.log(redirct);
-const name = document.getElementById("username");
-const uname = username.find((e) => e.email == redirct);
-if (name) {
-  name.textContent = uname.name;
-}
-console.log(uname);
 const redirctadmin = localStorage.getItem("admin");
-
 if (!redirct && !redirctadmin) {
   const url = "http://127.0.0.1:5500/HTML/login.html";
   window.location.href = url;
@@ -24,6 +12,18 @@ if (!redirct && !redirctadmin) {
 } else {
   window.innerHTML = "Page not found";
 }
+import projectData from "../db/projects.json" assert { type: "json" };
+import username from "../db/user.json" assert { type: "json" };
+console.log(username);
+console.log(projectData);
+
+console.log(redirct);
+const name = document.getElementById("username");
+const uname = username.find((e) => e.email == redirct);
+if (name) {
+  name.textContent = uname.name;
+}
+console.log(uname.name);
 
 const projectsContainer = document.querySelector(".projects");
 const modal = document.querySelector(".modal");
@@ -101,13 +101,11 @@ projectData.forEach((project) => {
       for (let i = 0; i < project.tags.length; i++) {
         const li = document.createElement("li");
         li.textContent = project.tags[i];
-        li.style.listStyle = "none";
         tagsUl.appendChild(li);
       }
       for (let i = 0; i < project.languages.length; i++) {
         const li = document.createElement("li");
         li.textContent = project.languages[i];
-        // li.style.listStyle = "none";
         languageUl.appendChild(li);
       }
       // Technologies.textContent = "technologies:" + project.technology;

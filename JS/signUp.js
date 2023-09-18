@@ -40,7 +40,7 @@ function handleSignup(event) {
   document.getElementById("name").value = "";
   document.getElementById("email").value = "";
   document.getElementById("password").value = "";
-  console.log(users);
+
   const url = "http://127.0.0.1:5500/HTML/login.html";
   window.location.href = url;
 }
