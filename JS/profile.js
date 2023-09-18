@@ -202,8 +202,11 @@ if (editProfile) {
       const userindex = users.findIndex((u) => u.email === loginUser);
       if (userindex !== -1) {
         users[userindex].name = editdata121.value;
-        users[userindex].password = editdata221.value;
-
+        if (editdata221.value == "") {
+          alert("Please enter Passwords");
+        } else {
+          users[userindex].password = editdata221.value;
+        }
         users[userindex].phoneNumber = editdata321.value;
 
         users[userindex].education = editdata421.value.split(",");
